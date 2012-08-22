@@ -11,9 +11,13 @@ When coupled with a cron job, this can be used to create a singular permanent so
 ##Dependencies:
 
 The lib files which manage adding social items to the database require: 
+
     mongodb and express
-The API is built using express and so requires: 
+
+The API is built using express and so requires:
+
     express, jade, mongodb and stylus.
+
 Currently no views are used but future revisions may add an admin portal to allow management of the social entries via a view.
 
 ##Limitations:
