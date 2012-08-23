@@ -18,7 +18,7 @@ The API is built using express and so requires:
 
     express, jade, mongodb and stylus.
 
-Currently no views are used but future revisions may add an admin interface to allow management of the social entries via an view.
+Currently no views are used but future revisions may add an admin interface to allow management of the social entries via a view.
 
 ##Limitations:
 
