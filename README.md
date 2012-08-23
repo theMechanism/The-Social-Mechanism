@@ -6,7 +6,7 @@ This simple node.js/mongo based web application aims to cache social activity fr
 
 ##Use:
 
-When coupled with a cron job, this can be used to create a singular permanent social timeline of the given users. The regular structure of the database and the extendibility of the API provided by node.js make this a perfect foundation for a social-based web or mobile display. You will need to alter the private.js file to contain information relavent to your program. Namely your Instragram API access token, an array of Twitter usernames and an array of Instagram user IDs. See the cron_jobs.txt and script.sh for ideas of how to keep your database up to date automatically (replacing paths as appropriate). These examples are from a centos Linux server.
+When coupled with a cron job, this can be used to create a singular permanent social timeline of the given users. The regular structure of the database and the extendibility of the API provided by node.js make this a perfect foundation for a social-based web or mobile display of social network activities. You will need to alter the private.js file (serves as a config file) to contain information relavent to your program. Namely your Instragram API access token, an array of Twitter usernames and an array of Instagram user IDs. See the cron_jobs.txt and script.sh for ideas of how to keep your database up to date automatically (replacing paths as appropriate). These examples are from a CentOS Linux server.
 
 ##Dependencies:
 
