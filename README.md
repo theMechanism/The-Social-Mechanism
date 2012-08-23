@@ -10,7 +10,7 @@ When coupled with a cron job, this can be used to create a singular permanent so
 
 ##Dependencies:
 
-The lib files which manage adding social items to the database require: 
+The lib files which manage adding social items to the database require:
 
     mongodb and express
 
