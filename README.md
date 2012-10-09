@@ -16,7 +16,7 @@ The lib files which manage adding social items to the database require **mongodb
 
 Since the app currently uses non-authenticated Twitter calls, it is limited by Twitter to around 100 calls per hour so be sure to lower the count argument for Twitter during testing. Authenticated posting would be an easy future addition. Similarly, ensure that if used with a cron job, you won't go over your limit per hour (I keep mine running every three hours pulling 20 tweets per user)
 
-##Improvements:
+##TODO:
 * Facebook Integration: Adding Facebook integration would obviously be huge. I roughed out how the results would be added in a commented out section at the bottom of socialupdate.js. However upcoming changes to the Facebook API will make constant server listening impossible as all API access will require a user generated authentication token that expires every few hours making an automated process difficult.
 * Hootsuite Integration: Hootsuite integration would similarly be great. However their API requires one to get a key directly from them and I'm still waiting on a request I put in months ago (Hootsuite could be a potential work around the Facebook problem above as well as possibly eliminating the need for a separate Twitter call)
 * Admin backend: Adding an Express/Jade based admin back end would be a nice addition. Such a portal would allow admins to manage promoted or existing content.
