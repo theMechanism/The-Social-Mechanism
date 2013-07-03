@@ -16,6 +16,8 @@ Also consider running your API via any handy node.js script. We use Nodejitsu's 
 
 ##Dependencies:
 
+To accomadate the latest Twitter update to version 2.0 of their API, be sure to require **ntwitter**. This fantastic module makes the new Twitter authentication a breeze. Be sure to generate all neccessary keys and secrets via their developer portal here https://dev.twitter.com/
+
 The lib files which manage adding social items to the database require **mongodb** and **express**. The API is built using express and so requires **express, jade, mongodb** and **stylus**. Currently no views are used but future revisions may add an admin portal to allow management of the social entries via a view.
 
 ##Limitations:

@@ -18,15 +18,16 @@ ApiProvider.prototype.getCollection = function(callback) {
 };
 
 // Find all social items for stream viewing
-ApiProvider.prototype.recent = function(count, page, callback) {
+ApiProvider.prototype.recent = function(count, page, type, callback) {
     this.getCollection(function(error, social_collection) {
       if( error ) callback(error)
       else {
       	page = page ? page : 0;
       	count = count ? count : 20;
-        social_collection.find({}, {sort:{api_date:-1}, skip:count*page, limit:count}).toArray(function(error, results) {
+      	var myargs = type ? {api_type:type} : {};
+        social_collection.find(myargs, {sort:{api_date:-1}, skip:count*page, limit:count}).toArray(function(error, results) {
           if( error ) callback(error)
-          else callback(null, results)
+          else {callback(null, results);}
         });
       }
     });
@@ -40,7 +41,7 @@ ApiProvider.prototype.postsByDate = function(datestart, dateend, order, count, p
       	page = page ? page : 0;
       	count = count ? count : 20;
       	//console.log("Looking between " + datestart + " and " + dateend );
-        social_collection.find({"api_date" : {$gt: datestart, $lt: dateend}}, {sort:{api_date:orderParse(order)}, skip:count*page, limit:count}).toArray(function(error, results) {
+        social_collection.find({"api_date" : {$gt: datestart, $lt: dateend}, "api_type" : { $in: ["Instagram", "Twitter", "Youtube"] }}, {sort:{api_date:orderParse(order)}, skip:count*page, limit:count}).toArray(function(error, results) {
           if( error ) callback(error)
           else {callback(null, results);}
         });

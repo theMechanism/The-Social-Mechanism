@@ -49,7 +49,7 @@ app.post('/v.1/locations', function(req, res){
 
 // returns list of recent posts
 app.get('/v.1/posts', function(req, res){
-	ApiProvider.recent(function(err, items) {
+	ApiProvider.recent(req.query["count"], req.query["page"], req.query["type"], function(err, items) {
 		res.writeHead(200, {
 			"Content-Type": "application/json",
 			"Access-Control-Allow-Origin": "*"
@@ -60,7 +60,7 @@ app.get('/v.1/posts', function(req, res){
 
 // returns by date limits
 app.get('/v.1/postsByDate', function(req, res){
-	ApiProvider.postsByDate(new Date(req.query["start-date"]), new Date(req.query["end-date"]), req.query["order"], req.query["count"], req.query["page"], function(err, items) {
+	ApiProvider.postsByDate(new Date(parseInt(req.query["start-date"])*1000), new Date(parseInt(req.query["end-date"])*1000), req.query["order"], req.query["count"], req.query["page"], function(err, items) {
 		res.writeHead(200, {
 			"Content-Type": "application/json",
 			"Access-Control-Allow-Origin": "*"
