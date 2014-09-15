@@ -6,3 +6,4 @@ app/config/database.php
 .DS_Store
 node_modules
 private.js
+error.log
