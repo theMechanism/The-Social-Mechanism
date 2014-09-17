@@ -62,7 +62,6 @@ module.exports = {
 				twees.push(tweetPros);
 			});
 			next(twees);
-			// logit("Adding tweets for " + twittername);
 		});
 	}
 };
