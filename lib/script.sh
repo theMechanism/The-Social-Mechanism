@@ -1,9 +1,7 @@
 #!/usr/bin/env sh
-node /path/to/thesocialmechanism/lib/twitterupdate.js
-node /path/to/thesocialmechanism/lib/instaupdate.js
-node /path/to/thesocialmechanism/lib/voiceupdate.js
+node ./script.js
 
-LOGFILE=/path/to/thesocialmechanism/lib/error.log
+LOGFILE=error.log
 
 log(){
     message="$@"
