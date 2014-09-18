@@ -25,6 +25,9 @@ module.exports = {
 		}, function (err, data) {
 			var tweets = data;
 			var twees = [];
+			if (!tweets) {
+				return next([]);
+			}
 			tweets.forEach(function(tweet) {
 				var tweetPros = {
 					title: tweet.user.name,

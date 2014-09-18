@@ -8,13 +8,16 @@ module.exports = {
 		var queryResponse = "";
 		https.get(options, function(response) {
 			// console.log(response.statusCode);
-			response.on('data', function(chunk){
-				queryResponse += chunk.toString();
-			});
-			response.on('end', function (chunk) {
-				var feed = JSON.parse(queryResponse).data;
-				next(feed);
-			});
+			if (response.statusCode !== 200) next('bad response from API');
+			else {
+				response.on('data', function(chunk){
+					queryResponse += chunk.toString();
+				});
+				response.on('end', function (chunk) {
+					var feed = JSON.parse(queryResponse).data;
+					next(false, feed);
+				});
+			}
 		});
 	},
 	saveData: function(collection, posts, next) {

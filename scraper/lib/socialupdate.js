@@ -14,48 +14,40 @@ module.exports = {
 			checkWhenDone(socialIDs.networks, function(network, doneCallback) {
 				switch (network.type) {
 					case 'Facebook':
-						checkWhenDone(network.ids, function(id, doneCallback) {
-							facebookupdate.getFacebook(id, function(fbPosts) {
-								lib.saveData(collection_name, fbPosts, function() {
-									console.log('Facebook data saved for ' + id);
-									doneCallback();
-								});
-							});
-						}, function() {
-							lib.loggit('Facebook call finished for ' + collection_name, doneCallback);
-						});
+						var getThis = facebookupdate.getFacebook;
 						break;
 					case 'Twitter':
-						checkWhenDone(network.ids, function(id, doneCallback) {
-							twitterupdate.getTwitter(id, function(tweets) {
-								lib.saveData(collection_name, tweets, function() {
-									console.log('Twitter data saved for ' + id);
-									doneCallback();
-								});
-							});
-						}, function() {
-							lib.loggit('Twitter call finished for ' + collection_name, doneCallback);
-						});					
+						var getThis = twitterupdate.getTwitter;
 						break;
 					case 'Instagram':
-						checkWhenDone(network.ids, function(id, doneCallback) {
-							instaupdate.getInsta(id, function(grams) {
-								lib.saveData(collection_name, grams, function() {
-									console.log('Instagram data saved for ' + id);
-									doneCallback();
-								});
-							});
-						}, function() {
-							lib.loggit('Instagram call finished for ' + collection_name, doneCallback);
-						});
+						var getThis = instaupdate.getInsta;
 						break;
 					default:
 						break;
 				}
+				checkWhenDone(network.ids, function(id, doneCallback) {
+					getThis(id, function(posts) {
+						saveData(network.type, collection_name, posts, id, doneCallback);
+					});
+				}, function() {
+					lib.loggit(network.type + ' call finished for ' + collection_name, doneCallback);
+				});
+
 			}, next);
 		});
 	},
 };
+
+function saveData(type, collection_name, posts, id, doneCallback) {
+	if (!posts.length > 0) {
+		console.log('no ' + type + ' found for ' + id);
+		doneCallback();
+	}
+	lib.saveData(collection_name, posts, function() {
+		console.log(type + ' data saved for ' + id);
+		doneCallback();
+	});
+}
 
 function checkWhenDone(array, toDo, whenDone) {
 	var length = _.size(array);
