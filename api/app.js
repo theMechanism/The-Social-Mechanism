@@ -20,11 +20,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
     // middleware to prevent Safari bug showing blank page on 304 HTTP response
-    agent = req.headers['user-agent'];
-    if ((agent.indexOf('Safari') > -1) && (agent.indexOf('Chrome') === -1) && (agent.indexOf('OPR') === -1)) {
-        res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.header('Pragma', 'no-cache');
-        res.header('Expires', 0);
+    if (req.headers['user-agent']) {
+        agent = req.headers['user-agent'];
+        if ((agent.indexOf('Safari') > -1) && (agent.indexOf('Chrome') === -1) && (agent.indexOf('OPR') === -1)) {
+            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.header('Pragma', 'no-cache');
+            res.header('Expires', 0);
+        }
     }
     next();
 });
