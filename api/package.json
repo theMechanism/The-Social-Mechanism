@@ -19,7 +19,6 @@
     "mongodb": "~1.4.8",
     "mocha": "~1.21.3",
     "underscore" : "~1.6.0",
-    "should": "~4.0.4",
-    "moment": "~2.8.1"
+    "should": "~4.0.4"
   }
 }
