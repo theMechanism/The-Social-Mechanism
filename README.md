@@ -1,35 +1,27 @@
-#The-Social-Mechanism
+# The-Social-Mechanism
 
-Node.js/Mongo API for caching online social activity
+Node.js/Mongo app for storing and serving social media activity
 
-This simple node.js/mongo based web application aims to cache social activity from a specified set of users and then cache this info in a sanitized fashion in a mongo database. This information is then served up by a corresponding API to be used on web-enabled devices. Currently, the app can pull from any number of Twitter, Instagram, and Youtube playlist feeds as well as a singlular Wordpress blog (with the JSON API plugin installed found at http://wordpress.org/extend/plugins/json-api/).
+The purpose of this app is to create a single social timeline of multiple networks and accounts. It stores social activity from a list of users in a database and provides an API. Facebook, Twitter and Instagram are currently supported.
 
-##Use:
+## Use:
 
-When coupled with a cron job, this can be used to create a singular permanent social timeline of the given users. The regular structure of the database and the extendibility of the API provided by node.js make this a perfect foundation for a social-based web or mobile display of social network activities.
+1. Alter the private.js file (example included) with the necessary information:
+	* your social media API keys
+	* identifiers for the social media accounts:
+1. Set up a cronjob to run the function at an interval to keep the data current (look at scraper/cron_jobs.txt for an example)
+1. Launch the API server (recent posts can be accessed via "/api/v.2/posts/**collection_name**")
 
-To get started, alter the private.js file (configuration file) to contain information relavent to your program. Namely your Instragram API access token, an array of Twitter usernames, an array of Instagram user IDs, and an array of Youtube plaaylist IDs.
+## Dependencies:
 
-See the cron_jobs.txt and script.sh for ideas of how to keep your database up to date automatically (replacing paths as appropriate). These examples are from a CentOS Linux server.
+Be sure to run ```npm install``` to download the necessary dependencies.
 
-Also consider running your API via any handy node.js script. We use Nodejitsu's Forever.
+## Limitations:
 
-##Dependencies:
+The Social Mechanism does not currently have support for deleting social media posts. Once pulled into the database, a deleted post will lead to bad links and missing images.
 
-To accomadate the latest Twitter update to version 2.0 of their API, be sure to require **ntwitter**. This fantastic module makes the new Twitter authentication a breeze. Be sure to generate all neccessary keys and secrets via their developer portal here https://dev.twitter.com/
+## TODO:
 
-The lib files which manage adding social items to the database require **mongodb** and **express**. The API is built using express and so requires **express, jade, mongodb** and **stylus**. Currently no views are used but future revisions may add an admin portal to allow management of the social entries via a view.
-
-##Limitations:
-
-Since the app currently uses non-authenticated Twitter calls, it is limited by Twitter to around 100 calls per hour so be sure to lower the count argument for Twitter during testing. Authenticated posting would be an easy future addition. Similarly, ensure that if used with a cron job, you won't go over your limit per hour (I keep mine running every three hours pulling 20 tweets per user).
-
-The Youtube gdata API is somewhat limited. In this script, we're sorting in reverse playlist order but that doesn't guarantee we'll get the latest additions since users can reorder playlists at will and there's no "sort by date added" option we're aware of. NB: it appears not all Youtube accounts are stored similarly on their end, most likely due to the age of the site.
-
-##TODO:
-* Facebook Integration: Adding Facebook integration would obviously be huge. I roughed out how the results would be added in a commented out section at the bottom of socialupdate.js. However upcoming changes to the Facebook API will make constant server listening impossible as all API access will require a user generated authentication token that expires every few hours making an automated process difficult.
-* Hootsuite Integration: Hootsuite integration would similarly be great. However their API requires one to get a key directly from them and I'm still waiting on a request I put in months ago (Hootsuite could be a potential work around the Facebook problem above as well as possibly eliminating the need for a separate Twitter call)
-* Admin backend: Adding an Express/Jade based admin back end would be a nice addition. Such a portal would allow admins to manage promoted or existing content.
-* Update Repeated Entries: since entries are cached they're never updated after being pulled initially. This severly limits the usefullness of the "likes" field since its never updated after future retweets/likes are noted in their respective APIs.
-* Since IDs: Both Twitter and Instagram support a "since" argument in their API calls which will return results since a particular datestamp or ID. Older versions of the code looked for the most recent entry (based on api_date) and fed that as this argument to ensure no intervening intervening entries were missed. However this caused callback bugs (not to mention the headache of then paging through such results in the case of large numbers of entries). If added back, this could be hugely useful for systems that run on more infrequent intervals and increase efficieny in terms of number of calls made on the external APIs.
-* Pull all appropriate related info for Youtube playlist authors i.e. profile page, image, etc. Will require separate API call.
+* Admin backend: Adding an admin back end would be a nice addition. Such a portal would allow admins to manage promoted or existing content
+* Better handling for deleted posts
+* Extend the API with more GET request options
