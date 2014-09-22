@@ -1,0 +1,24 @@
+{
+  "name": "The-Social-Mechanism",
+  "version": "0.0.1",
+  "description": "API for The Social Mechanism",
+  "author": "The Mechanism",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "debug": "node --debug ./bin/www",
+    "supervise": "supervisor ./bin/www",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "express": "~4.2.0",
+    "morgan": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "body-parser": "~1.0.0",
+    "debug": "~0.7.4",
+    "mongodb": "~1.4.8",
+    "mocha": "~1.21.3",
+    "underscore" : "~1.6.0",
+    "should": "~4.0.4"
+  }
+}

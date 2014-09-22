@@ -1,135 +1,63 @@
-/**
- * Module dependencies.
- */
-
 var express = require('express');
-var ApiProvider = require('./apiprovider').ApiProvider;
+var path = require('path');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-var app = module.exports = express.createServer();
+var db = require('./lib/db');
+var routes = require('./routes/routes');
 
-// Configuration
+var app = express();
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+if (app.get('env') === 'development') {
+    app.use(logger('dev'));
+} else {
+    app.use(logger('short'));
+}
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res, next) {
+    // middleware to prevent Safari bug showing blank page on 304 HTTP response
+    if (req.headers['user-agent']) {
+        agent = req.headers['user-agent'];
+        if ((agent.indexOf('Safari') > -1) && (agent.indexOf('Chrome') === -1) && (agent.indexOf('OPR') === -1)) {
+            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.header('Pragma', 'no-cache');
+            res.header('Expires', 0);
+        }
+    }
+    next();
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-});
+db.open(function() {
+    app.use('/', routes);
 
-app.configure('production', function(){
-  app.use(express.errorHandler()); 
-});
-
-var ApiProvider = new ApiProvider('localhost', 27017);
-
-
-// creates a location in the 'socials' collection
-/*
-app.post('/v.1/locations', function(req, res){
-  require('mongodb').connect(mongourl, function(err, conn){
-    conn.collection('socials', function(err, coll){
-      coll.insert( req.body, {safe:true}, function(err){
-      res.writeHead(200, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      });
-      res.end(JSON.stringify(req.body));
-      });
+    /// catch 404 and forward to error handler
+    app.use(function(req, res, next) {
+        var err = new Error('Not Found');
+        err.status = 404;
+        next(err);
     });
-  });
- });
-*/
 
-// returns list of recent posts
-app.get('/v.1/posts', function(req, res){
-	ApiProvider.recent(req.query["count"], req.query["page"], req.query["type"], function(err, items) {
-		res.writeHead(200, {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*"
-		});
-		res.end(JSON.stringify(items));
-	});
-});
+    /// error handlers
 
-// returns by date limits
-app.get('/v.1/postsByDate', function(req, res){
-	ApiProvider.postsByDate(new Date(parseInt(req.query["start-date"])*1000), new Date(parseInt(req.query["end-date"])*1000), req.query["order"], req.query["count"], req.query["page"], function(err, items) {
-		res.writeHead(200, {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*"
-		});
-		res.end(JSON.stringify(items));
-	});
-});
+    // development error handler
+    // will print stacktrace
+    if (app.get('env') === 'development') {
+        app.use(function(err, req, res, next) {
+            res.status(err.status || 500);
+            res.json(500, err);
+        });
+    }
 
-// returns by date limits
-app.get('/v.1/postsByWeek', function(req, res){
-	ApiProvider.postsByWeek(new Date(req.query["date"]), req.query["order"], req.query["count"], req.query["page"], function(err, items) {
-	    res.writeHead(200, {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*"
-	    });
-	    res.end(JSON.stringify(items));
-	});
-});
-
-// returns last X days from given date (defaults to current)
-app.get('/v.1/postXdays', function(req, res){
-	ApiProvider.postXdays(new Date(req.query["date"]), req.query["days"], req.query["order"], req.query["count"], req.query["page"], function(err, items) {
-	    res.writeHead(200, {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*"
-	    });
-	    res.end(JSON.stringify(items));
-	});
-});
-
-// returns a specific location by id
-app.get('/v.1/posts/:post_id', function(req, res){
-
-  var ObjectID = require('mongodb').ObjectID;
-  
-  require('mongodb').connect(mongourl, function(err, conn){
-    conn.collection('socials', function(err, coll){
-      coll.findOne({'_id':new ObjectID(req.params.post_id)}, function(err, document) {
-      res.writeHead(200, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      });
-      res.end(JSON.stringify(document));
-      });
+    // production error handler
+    // no stacktraces leaked to user
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.json(500, 'something went wrong');
     });
-  });
-  
 });
 
-// updates a facility
-/*
-app.put('/v.1/posts/:location_id/facilities/:facility_id', function(req, res){
-
-  var ObjectID = require('mongodb').ObjectID;
-  
-  require('mongodb').connect(mongourl, function(err, conn){
-    conn.collection('facilities', function(err, coll){
-      coll.findAndModify({'_id':new ObjectID(req.params.facility_id)}, [['name','asc']], { $set: req.body }, {}, function(err, document) {
-      res.writeHead(200, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      });
-      res.end(JSON.stringify(document));
-      });
-    });
-  });
-
-});
-*/
-
-app.listen(3001);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+module.exports = app;
